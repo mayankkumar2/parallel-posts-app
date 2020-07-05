@@ -14,6 +14,12 @@ import {LinkedinLoginScreen} from './linkedinLogin';
 import Ionicons from 'react-native-vector-icons/Ionicons';
 import FontAwesome from 'react-native-vector-icons/FontAwesome';
 
+
+
+/*
+   The Functional Component LogoutModal is used to present the option that a user can avail if he/she intends to do so.
+
+ */
 function LogoutModal(props) {
     let { isVisible, logoutPayload } = props;
     let { name, removeAccount, close, editDetails } = logoutPayload;
