@@ -18,7 +18,6 @@ import FontAwesome from 'react-native-vector-icons/FontAwesome';
 
 /*
    The Functional Component LogoutModal is used to present the option that a user can avail if he/she intends to do so.
-
  */
 function LogoutModal(props) {
     let { isVisible, logoutPayload } = props;

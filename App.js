@@ -10,9 +10,10 @@ import UploadsPage from './Pages/UploadsPage';
 
 import HomeScreen from './Pages/HomeScreen';
 import {LinkedinLoginScreen} from './Pages/linkedinLogin';
-import TwitterLoginScreen from './Pages/twitterLogin';
 
 var Stack = createStackNavigator();
+
+// The component creates the stack navigation registry.
 class App extends React.Component {
   render() {
     return (

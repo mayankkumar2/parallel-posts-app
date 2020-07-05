@@ -10,6 +10,9 @@ const {RNTwitterSignIn} = NativeModules;
 import {twitterCredentials} from './credentials'
 
 
+/*
+ *  The component TwitterLoginScreen handles login to twitter account
+ */
 
 export default class TwitterLoginScreen extends Component {
   state = {
@@ -19,6 +22,7 @@ export default class TwitterLoginScreen extends Component {
     startup: '',
     twitterButtonEnable: true,
   };
+  // Handles Login to Twitter Account
   _twitterSignIn = async () => {
     this.setState({twitterButtonEnable: false});
     const {setLogoutVisible, setLogoutPayload, setTwitterStatus,
@@ -45,6 +49,8 @@ export default class TwitterLoginScreen extends Component {
     await AsyncStorage.setItem('tweetSecret', bat.authTokenSecret);
     this.setState({twitterButtonEnable: true});
   };
+
+  // Handles Logout for Twitter Account
   handleLogout = async () => {
     const {setLogoutVisible, setLogoutPayload, setTwitterStatus,
       setTwitterKeyStatus } = this.props;
@@ -58,12 +64,15 @@ export default class TwitterLoginScreen extends Component {
     await AsyncStorage.setItem('tweetKey', '');
     await AsyncStorage.setItem('tweetSecret', '');
   };
+
+  // Fetches configration from AsyncStorage
   async componentDidMount() {
     this.setState({
       authToken: await AsyncStorage.getItem('tweetKey'),
       authTokenSecret: await AsyncStorage.getItem('tweetSecret'),
     });
   }
+
   render() {
     const {isLoggedIn} = this.state;
     const {setLogoutVisible, setLogoutPayload, setTwitterStatus,

@@ -27,6 +27,7 @@ var Dim = {
   height: Dimensions.get('window').height,
 };
 
+//  Fuctional component to present image cards
 function ImageCard(props) {
   return (
     <View
@@ -89,11 +90,10 @@ function ImageCard(props) {
   );
 }
 
+// Function to remove duplicate tags
 function RemoveDuplicates( tags ) {
   let newTaglist = [];
-
   tags.sort((a,b) => a.value < b.value ? -1: 1);
-
   if (tags.length >0)
     newTaglist.push(tags[0])
   let a = 0, b = 0;
@@ -112,7 +112,6 @@ function RemoveDuplicates( tags ) {
 }
 
 function TagsCard(tags, pushCap, handleHashtags) {
-
   let tagsChips = tags.map((value, index) => (
     <TouchableOpacity
       key={index}
@@ -128,6 +127,20 @@ function TagsCard(tags, pushCap, handleHashtags) {
   ));
   return tagsChips;
 }
+
+/*
+
+The following fuctions handle upload to a specific platform.
+    -   UploadToFacebook
+    -   handleLinkedinUpload
+    -   handleTwitterUpload
+
+params:
+    - images
+        *   Takes in array of images
+    - caption/status
+        *   Taken in caption to post
+ */
 
 async function UploadToFacebook(images, caption) {
   return new Promise(async (resolve, reject) => {
@@ -182,7 +195,6 @@ async function UploadToFacebook(images, caption) {
     });
   });
 }
-
 async function handleLinkedinUpload(images, status) {
   return new Promise(async (resolve, reject) => {
     let AccessToken = await AsyncStorage.getItem('linkedinAccessToken');
@@ -297,8 +309,7 @@ async function handleLinkedinUpload(images, status) {
     });
   });
 }
-
-async function handleTwitter(images, caption) {
+async function handleTwitterUpload(images, caption) {
   return new Promise(async (resolve, reject) => {
     let key = await AsyncStorage.getItem('tweetKey');
     let Secret = await AsyncStorage.getItem('tweetSecret');
@@ -331,6 +342,10 @@ async function handleTwitter(images, caption) {
   });
 }
 
+
+/*
+    The fuctional component - UploadStatusModal - presents the real time status of the uploads.
+ */
 function UploadStatusModal(props) {
   const {
     currentQueue,
@@ -741,6 +756,8 @@ export default class UploadsPage extends React.Component {
       uploadQueue: [],
     },
   };
+
+  //    Fuction handles add image button
   _handleImageAdd = async () => {
     try {
       let Images = await ImagePicker.openPicker({
@@ -766,6 +783,8 @@ export default class UploadsPage extends React.Component {
       Alert.alert('Something went wrong!', 'An error occured ' + e);
     }
   };
+
+  //    Handles image preview
   _handlePreview = element => {
     this.setState({
       image: [
@@ -781,6 +800,8 @@ export default class UploadsPage extends React.Component {
       showImage: true,
     });
   };
+
+  //    Handles removing image cards
   _handleImageRemoveButton = uri => {
     if (this.state.Images.length == 1) {
       this.props.navigation.pop();
@@ -795,11 +816,15 @@ export default class UploadsPage extends React.Component {
       Images: img,
     });
   };
+
+  //    Handles adding hastag to caption
   _handlePushCaption = text => {
     this.setState({
       caption: this.state.caption + ' #' + text,
     });
   };
+
+  //    Handles network request to get hashtags suggestions
   _handleGETTags = async () => {
     this.setState({
       pressGETTags: true,
@@ -829,6 +854,7 @@ export default class UploadsPage extends React.Component {
       });
     }
   };
+
   UNSAFE_componentWillMount() {
     this._updateToken();
     this._LoadTopTenHashtags();
@@ -836,6 +862,8 @@ export default class UploadsPage extends React.Component {
       Images: this.props.route.params.Images,
     });
   }
+
+  //    Fetches Auth Token for different account
   _updateToken = async () => {
     this.setState({
       facebookPageAccessToken: await AsyncStorage.getItem(
@@ -846,6 +874,8 @@ export default class UploadsPage extends React.Component {
       linkedinAccessToken: await AsyncStorage.getItem('linkedinAccessToken'),
     });
   };
+
+  //    Scans the captions to fetch hastags manually entered and adds them to the suggestions.
   _handleHashtagInput = async ( caption ) => {
     const {tags} = this.state;
     let hashtags =  caption.match(/#[\p{L}]+/ugi) || []
@@ -874,6 +904,8 @@ export default class UploadsPage extends React.Component {
 
     this.setState({ tags })
   }
+
+  //    Handles SELECTED status of each Hashtag suggeted CHIP
   _handleHashtagButtonPress = async ( tag ) => {
     let { tags } = this.state;
     for (let x in tags) {
@@ -882,6 +914,8 @@ export default class UploadsPage extends React.Component {
     }
     this.setState({ tags })
   }
+
+  //    Function handles displaying top 10 hashtags from hashtag table data store
   _LoadTopTenHashtags = async () => {
       let STORED_HASHTAGS = JSON.parse(await AsyncStorage.getItem('HASHTAGS')) || [];
       STORED_HASHTAGS.sort( (a,b) => a.count > b.count ? -1: 1 );
@@ -904,6 +938,8 @@ export default class UploadsPage extends React.Component {
           tags: RemoveDuplicates([...this.state.tags, ...TagsToAdd])
       })
   }
+
+  //    Function handles the hashtags data store
   AddHashtagsToStore = async () => {
     let STORED_HASHTAGS = JSON.parse(await AsyncStorage.getItem('HASHTAGS')) || [];
     STORED_HASHTAGS.sort( (a,b) => a.name < b.name ? -1: 1 );
@@ -935,6 +971,8 @@ export default class UploadsPage extends React.Component {
     }
     await AsyncStorage.setItem('HASHTAGS', JSON.stringify(STORED_HASHTAGS) );
   }
+
+  //    Handles button press action to get hashtag suggestions
   _handleHashtagGETButton = async () => {
         const {tags, caption} = this.state;
         let hashtags =  caption.match(/#[\p{L}]+/ugi) || []
@@ -958,6 +996,7 @@ export default class UploadsPage extends React.Component {
         console.log(tags);
         this.setState({ tags })
     };
+
   render() {
     return (
       <>
@@ -1295,6 +1334,7 @@ export default class UploadsPage extends React.Component {
     );
   }
 
+  //    Handles Upload button press action
   _handleUpload = async () => {
     this.AddHashtagsToStore();
     // Requires state parameters
@@ -1378,7 +1418,7 @@ export default class UploadsPage extends React.Component {
     }
     if (twitterPublish) {
       try {
-        twitterStatus = await handleTwitter(Images, caption);
+        twitterStatus = await handleTwitterUpload(Images, caption);
       } catch (e) {
         twitterStatus = e;
       }

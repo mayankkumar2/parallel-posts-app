@@ -28,15 +28,37 @@ const deviceDimensions = {
   Height: Dimensions.get('window').height,
 };
 
+/*
+  The configuration for oauth to Linkedin Account.
+ */
+
 const config = {
   ...likedinCredentials,
   scope:
     'r_emailaddress,rw_organization_admin,r_liteprofile,w_member_social,w_organization_social,r_organization_social',
   response_type: 'code',
-  state: 'googleGogges',
-  redirect_uri: 'http://google.com/callback',
+  state: 'SIGN_IN',
+  redirect_uri: 'YOUR_CALLBACK_URL',
 };
 
+
+/*
+  Function Generates the URL for linkedin OAuth
+ */
+
+function getUrlForAuth(_config) {
+  let _baseURL = 'https://www.linkedin.com/oauth/v2/authorization?';
+  _baseURL += 'client_id=' + _config.clientId + '&'; // adding clientID
+  _baseURL += 'response_type=' + _config.response_type + '&'; //adding response type
+  _baseURL += 'redirect_uri=' + _config.redirect_uri + '&'; //add redirect uri
+  _baseURL += 'state=' + _config.state + '&'; // add state
+  _baseURL += 'scope=' + _config.scope; // add scopes
+  return _baseURL;
+}
+
+/*
+  Functional component to finalize URN to be used to upload POSTS.
+ */
 function DialogForORGID(props) {
   let [text, setText] = useState('');
   let {isVisible, setState} = props;
@@ -143,16 +165,6 @@ function DialogForORGID(props) {
   );
 }
 
-function getUrlForAuth(_config) {
-  let _baseURL = 'https://www.linkedin.com/oauth/v2/authorization?';
-  _baseURL += 'client_id=' + _config.clientId + '&'; // adding clientID
-  _baseURL += 'response_type=' + _config.response_type + '&'; //adding response type
-  _baseURL += 'redirect_uri=' + _config.redirect_uri + '&'; //add redirect uri
-  _baseURL += 'state=' + _config.state + '&'; // add state
-  _baseURL += 'scope=' + _config.scope; // add scopes
-  return _baseURL;
-}
-
 export function LinkedinLoginScreen(props) {
   const [showLoginWebview, setWebviewState] = useState(false);
   const [linkedinCode, setLinkedinCode] = useState('');
@@ -164,6 +176,7 @@ export function LinkedinLoginScreen(props) {
   const [LinkedinButtonEnable, setLinkedinButtonEnable] = useState(true);
   const {setLogoutVisible, setLogoutPayload, setLinkedinStatus} = props;
 
+  // Function handles navigation changes on webview
   let _handleNav = obj => {
     var url = decodeURIComponent(obj.url);
     const hashes = url.slice(url.indexOf('?') + 1).split('&');
@@ -192,9 +205,17 @@ export function LinkedinLoginScreen(props) {
       CookieManager.clearAll();
     }
   };
+
+  // Makes Webview Visible
   let _handleLogin = () => {
     setWebviewState(true);
   };
+
+  // Function that completes 3 Legged OAuth
+  /*
+    codeVal: Takes the Code from Callback Redirect
+    _config: Taken Configuration object, that contains for Config for OAuth.
+   */
   let fetchAcessToken = async (codeVal, _config) => {
     setLinkedinButtonEnable(false);
     let _string =
@@ -247,6 +268,8 @@ export function LinkedinLoginScreen(props) {
     }
     setLinkedinButtonEnable(true);
   };
+
+  // Retrieve the saved configurations from AsyncStorage.
   useEffect(() => {
     (async () => {
       setAccessToken(await AsyncStorage.getItem('linkedinAccessToken'));
