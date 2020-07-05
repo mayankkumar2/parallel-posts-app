@@ -17,7 +17,8 @@ import FontAwesome from 'react-native-vector-icons/FontAwesome';
 
 
 /*
-   The Functional Component LogoutModal is used to present the option that a user can avail if he/she intends to do so.
+   The Functional Component - LogoutModal - is used to present the option that a user can avail if he/she intends to
+   logout or login to a different account.
  */
 function LogoutModal(props) {
     let { isVisible, logoutPayload } = props;
@@ -137,6 +138,10 @@ function LogoutModal(props) {
   );
 }
 
+/*
+    The functional component - FacebookPageSelectionDialog - is used to present users with the pages that they may want
+    to manage.
+ */
 function FacebookPageSelectionDialog(props) {
   let {PageList} = props;
   let mapForPagesList = PageList.map((value, key) => {
@@ -176,6 +181,7 @@ function HomeScreen(props) {
     setEnablePostState(FacebookLogin || TwitterLogin || LinkedLogin);
   }, [FacebookLogin, LinkedLogin, TwitterLogin]);
 
+  // The Hook loads Login Status for all the social media platforms
   useEffect(() => {
     (async () => {
       setFacebookState(await AsyncStorage.getItem('facebookAccessToken'));
@@ -185,6 +191,7 @@ function HomeScreen(props) {
     })();
   }, []);
 
+  // Handles facebook login Action
   let handleLogin = async () => {
       if (FacebookLogin) return;
     let result = await LoginManager.logInWithPermissions([
@@ -201,7 +208,7 @@ function HomeScreen(props) {
         .get(
           `https://graph.facebook.com/v6.0/me/accounts?access_token=${token.accessToken.toString()}`,
         )
-        .catch(err => alert('Error fetching data. ->' + err + ' |'));
+        .catch(err => Alert.alert('Error fetching data. ->' + err + ' |'));
       let PageListR = [];
       PageListR.push({
         name: 'Use as self',
@@ -216,11 +223,14 @@ function HomeScreen(props) {
       setPageList(PageListR);
     }
   };
+  // Handles facebook logout action
   let handleLogout = () => {
     LoginManager.logOut();
     setFacebookState('');
     AsyncStorage.setItem('facebookAccessToken', '');
   };
+
+  // Handles Add Add Image action button
   let _handleImageAdd = async () => {
     try {
       let Images = await ImagePicker.openPicker({
@@ -251,7 +261,7 @@ function HomeScreen(props) {
         flex: 1,
         backgroundColor: 'white',
       }}>
-      {/* Login panels */}
+      {/* Facebook Page Selection Dialog */}
       {PageList.length > 0 ? (
         <FacebookPageSelectionDialog
           PageList={PageList}
@@ -259,7 +269,7 @@ function HomeScreen(props) {
           setState={setFacebookState}
         />
       ) : null}
-      {/* Logout screen */}
+      {/* Logout Component */}
         <LogoutModal isVisible={LogoutModalVisible} logoutPayload={LogoutPayload}/>
       <View
         style={{
