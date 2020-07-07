@@ -14,7 +14,7 @@ import {twitterCredentials} from './credentials'
  *  The component TwitterLoginScreen handles login to twitter account
  * props:
  *    - setLogoutVisible   : boolean   - Disable/Enable Login TouchOpacity while AccessToken is fetched
- *    - setTwitterState    : string    - Sets token form HomeScreen
+ *    - setTwitterState    : string    - Sets token for HomeScreen Component
  *    - setTwitterKeyStatus: string    - Sets Twitter Key for HomeScreen state
  *    - setLogoutPayload   : Object    - Taken in close(), removeAccount(), editDetails() implementation
  */
@@ -24,7 +24,6 @@ export default class TwitterLoginScreen extends Component {
     isLoggedIn: false,
     authToken: '',
     authTokenSecret: '',
-    startup: '',
     twitterButtonEnable: true,
   };
   // Handles Login to Twitter Account
