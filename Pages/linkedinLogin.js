@@ -38,7 +38,7 @@ const config = {
     'r_emailaddress,rw_organization_admin,r_liteprofile,w_member_social,w_organization_social,r_organization_social',
   response_type: 'code',
   state: 'SIGN_IN',
-  redirect_uri: 'YOUR_CALLBACK_URL',
+  redirect_uri: 'http://google.com/callback',
 };
 
 
@@ -164,6 +164,14 @@ function DialogForORGID(props) {
     </Dialog.Container>
   );
 }
+
+/*
+ *  The component LinkedinLoginScreen handles login to linkedin account
+ * props:
+ *    - setLogoutVisible   : boolean   - Disable/Enable Login TouchOpacity while AccessToken is fetched
+ *    - setLinkedinState   : string   - Sets token form HomeScreen
+ *    - setLogoutPayload   : Object    - Taken in close(), removeAccount(), editDetails() implementation
+ */
 
 export function LinkedinLoginScreen(props) {
   const [showLoginWebview, setWebviewState] = useState(false);

@@ -26,7 +26,7 @@ var Dim = {
   height: Dimensions.get('window').height,
 };
 
-//  Fuctional component to present image cards
+//  Functional component to present image cards
 function ImageCard(props) {
   return (
     <View
@@ -89,7 +89,7 @@ function ImageCard(props) {
   );
 }
 
-// Function to remove duplicate tags
+//  Function to remove duplicate tags
 function RemoveDuplicates( tags ) {
   let newTaglist = [];
   tags.sort((a,b) => a.value < b.value ? -1: 1);
