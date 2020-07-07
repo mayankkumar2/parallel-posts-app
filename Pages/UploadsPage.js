@@ -11,9 +11,8 @@ import {
 } from 'react-native';
 import {Button} from 'react-native-paper';
 import ImageView from 'react-native-image-view';
-import {Chip, TextInput, Switch} from 'react-native-paper';
+import {TextInput, Switch} from 'react-native-paper';
 import Icon from 'react-native-vector-icons/dist/AntDesign';
-import FeatherIcon from 'react-native-vector-icons/dist/Feather';
 import AsyncStorage from '@react-native-community/async-storage';
 import {StackActions} from '@react-navigation/native';
 import axios from 'axios';
