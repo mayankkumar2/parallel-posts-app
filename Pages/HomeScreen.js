@@ -167,19 +167,35 @@ function FacebookPageSelectionDialog(props) {
 }
 
 function HomeScreen(props) {
-    const EMPTY_LOGOUT_PAYLOAD = {}
+  const EMPTY_LOGOUT_PAYLOAD = {}
+
+  // The following variables keep track of social media user state
   const [FacebookLogin, setFacebookState] = useState('');
   const [LinkedLogin, setLinkedinState] = useState('');
   const [TwitterLogin, setTwitterState] = useState('');
   const [TwitterKey, setTwitterKeyState] = useState('');
-  const [EnablePost, setEnablePostState] = useState(false);
+
+  // Facebook Page List state variable
   const [PageList, setPageList] = useState([]);
+
+  // State contains functions to manage user for social media platform
+    /*
+        The state variable - LogoutPayload - is used to pass down payload from TwitterLogin and
+        LinkedinLoginScreenComponent
+
+        The payload is then passed on to LogoutModal component to provide following actions
+            - Remove account
+            - Edit Account
+    */
   const [LogoutPayload, setLogoutPayload] = useState(EMPTY_LOGOUT_PAYLOAD);
+
+  // The variable manages the sate of LogoutModal Component
   const [LogoutModalVisible, setLogoutModalVisible] = useState(false);
-    const [facebookLoginEnabled, setFacebookLoginEnable] = useState(true);
-  useEffect(() => {
-    setEnablePostState(FacebookLogin || TwitterLogin || LinkedLogin);
-  }, [FacebookLogin, LinkedLogin, TwitterLogin]);
+
+  /*
+    The state variable is used to disable the FacebookLoginButton for the time AccessToken is fetched after login
+  */
+  const [facebookLoginEnabled, setFacebookLoginEnable] = useState(true);
 
   // The Hook loads Login Status for all the social media platforms
   useEffect(() => {
@@ -192,8 +208,8 @@ function HomeScreen(props) {
   }, []);
 
   // Handles facebook login Action
-  let handleLogin = async () => {
-      if (FacebookLogin) return;
+  let handleFacebookLogin = async () => {
+    if (FacebookLogin) return;
     let result = await LoginManager.logInWithPermissions([
       'email',
       'publish_pages',
@@ -224,14 +240,14 @@ function HomeScreen(props) {
     }
   };
   // Handles facebook logout action
-  let handleLogout = () => {
+  let handleFacebookLogout = () => {
     LoginManager.logOut();
     setFacebookState('');
     AsyncStorage.setItem('facebookAccessToken', '');
   };
 
-  // Handles Add Add Image action button
-  let _handleImageAdd = async () => {
+  // Handles Add Image action button
+  let _handleAddImageButton = async () => {
     try {
       let Images = await ImagePicker.openPicker({
         multiple: true,
@@ -321,18 +337,18 @@ function HomeScreen(props) {
                       removeAccount: () => {
                           setLogoutModalVisible(false);
                           setLogoutPayload({});
-                          handleLogout();
+                          handleFacebookLogout();
                       },
                       editDetails: () => {
                           setLogoutModalVisible(false);
                           setLogoutPayload({});
-                          handleLogout();
-                          handleLogin();
+                          handleFacebookLogout();
+                          handleFacebookLogin();
                       },
                   });
               } else {
                   setFacebookLoginEnable(false);
-                handleLogin();
+                  handleFacebookLogin();
                   setFacebookLoginEnable(true);
               }
             }}>
@@ -363,7 +379,7 @@ function HomeScreen(props) {
           alignItems: 'center',
         }}>
         <Button
-          onPress={_handleImageAdd}
+          onPress={_handleAddImageButton}
           disabled={!(FacebookLogin || TwitterLogin || LinkedLogin)}
           mode={'contained'}
           color={'#5859ED'}
